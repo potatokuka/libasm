@@ -1,0 +1,399 @@
+General notes for x86 asm, Intel
+>>>>>> WATCHING AND READING SHIT <<<<<<
+  >>>>>> SO YOU DONT HAVE TO <<<<<<
+
+    *** SOURCES ***
+    YOUTUBE
+https://bit.ly/3XM8vE6
+    Documentaion
+https://bit.ly/2Yp6OLI
+https://bit.ly/2XS59PG
+
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+rdi - used to pass 1st argument to functions
+rsi - used to pass 2nd argument to functions
+rdx - used to pass 3rd argument to functions
+rcx - used to pass 4th argument to functions
+r8 - used to pass 5th argument to functions
+r9 - used to pass 6th argument to functions
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+{THE INSTRUCTION POINTER DOES NOT JUMP TO LABEL, IT JUMPS TO THE INSTRUCTION
+  FOLLOWING THE LABEL}
+
+RSI == 'SOURCE INDEX' ---> what's incoming
+RDI == 'DESTINATION INDEX' --> what's being yeeted FIRST ARGUEMENT given
+RSP == STACK POINTER
+RBP == STACK ADDR AFTER RETURN ADDR
+**** Notation ****
+e, %rax, %rcx, %rdx, %rdi, %rsi, %rsp, and %r8-r11 are
+considered caller-save registers, meaning that they are not necessarily saved across function
+calls. By convention, %rax is used to store a function’s return value, if it exists and is no more
+than 64 bits long. (Larger return types like structs are returned using the stack.) Registers %rbx,
+%rbp, and %r12-r15 are callee-save registers, meaning that they are saved across function
+calls. Register %rsp is used as the stack pointer, a pointer to the topmost element in the stack.
+ %rdi, %rsi, %rdx, %rcx, %r8, and %r9 are used to pass the first six integer
+or pointer parameters to called functions. Additional parameters (or large parameters such as
+structs passed by value) are passed on the stack.
+>> If the function has a return value, it will be stored in RAX after the
+>> function call
+
+________________________________________
+64-bit Reg | 32-bit Reg | 16-bit | 8-bit
+________________________________________
+rax	   | eax 	| ax	 | al
+________________________________________
+rbx	   | ebx 	| bx	 | bl
+________________________________________
+rcx	   | ecx 	| cx	 | cl
+________________________________________
+rdx	   | edx 	| dx	 | dl
+________________________________________
+rsi	   | esi 	| si	 | sil
+________________________________________
+rdi	   | edi 	| di	 | dil
+________________________________________
+rbp	   | ebp 	| bp	 | bpl
+________________________________________
+rsp	   | esp 	| sp	 | spl
+________________________________________
+r8 	   | r8d 	| r8w	 | r8b
+________________________________________
+r9 	   | r9d 	| r9w 	 | r9b
+________________________________________
+r10	   | r10d	| r10w	 | r10b
+________________________________________
+r11	   | r11d	| r11w	 | r11b
+________________________________________
+r12	   | r12d	| r12w 	 | r12b
+________________________________________
+r13	   | r13d	| r13w	 | rl3b
+________________________________________
+r14	   | r14d	| r14w 	 | r14b
+________________________________________
+r15        | r15d       | r15w   | r15b
+
+
+xor: xor rcx, rcx (make zero)
+mov: MOVE SOURCE to DEST mov rcx, 7   (move 7 to rcx)
+push: Push SOURCE onto stack
+pop: Pop top of stack into destination
+cmp: Set condition codes according to S1 - s2
+test: Set condition codes according to s1 & s2
+^^ syntax for BOOL instructions ^^
+AND DEST, SRC --> result is stored in DEST
+AND mem/reg, mem/reg/imm
+OR mem/reg, mem/reg/imm
+NOT mem/reg -> flips all the bits
+XOR mem/reg, mem/reg/imm -> exclusive or
+NOR -> Not or // OR first then NOT result
+NAND -> AND then NOT result
+
+RCX: counter Reg
+________________________________________
+Instruction with two suffixes
+mov: move byte to word
+push: move byte to word
+
+
+modern verision of x86 is called x64
+
+Machine code is a long series of binary
+Allows for Self-Moifying-Code
+Write drivers, OS, kernels, compilers, embedded devices
+Optimise programs for speed or size
+
+--- CONS ---
+Difficult to debug and maintain
+It does not offer any abilities that high-level languages offer
+
+*** Assembler ***
+Translates program from ASM to Machine code
+Instead of "compililing" it's supposed to be "assembling"
+___ASSEMBLER FOR MAC OS___
+brew install nasm
+nasm -verison
+(compililing with NASM)
+nasm -f macho64 /pathto/file
+
+Make a Native Project
+add main file, main.c
+how to call asm from c
+
+#include <iostream>
+-make the file use 64bit-
+add NASM to build
+
+(prototype asm function in main)
+extern(external to file) "C"(calling convention )int libfunc();
+
+int main()
+{
+  printf("The result is: %d\n", libfunc);
+  return (0);
+}
+
+______ libfunc.asm ______
+.code
+libfunc proc (proc == procedure[function])
+  mov(move) rax |(register to be moved to)|, 123 |(what is being moved)|
+  ret (returns)
+libfunc endp
+end
+
+-- x86 registers --
+General purpose Reg AX[AH][AL] BX[BH][BL](need to push n pop when using)
+		    CX[CH][CL] DX[DH][DL]
+
+Index Reg	SI[Source Index] DI[Destination Index] -mainly used for strings-
+  -not general purpose- BP[Base Pointer] SP[Stack Pointer]
+
+Instruction Pointer -Not GP- IP[Instruction Pointer]
+
+Flags Reg FLAGS -used for branching-
+
+mov into reg
+
+  mov ax, -1 (using all 16 bits)
+  mov al, 0 (changes last 8 bits)
+  mov ah, 0 (changes top 8 bits)
+
+--- 32bit Reg ---
+EAX[AX][AH][AL]... and so on
+expanded same name, just with a E infront
+
+--- 64bit ---
+Same shit as 32, just pre refrencing with R instead of E
+Allows to access low bytes of SI, SIL; DI, DIL
+Added another 8 GP Regs R8[R8D][R8W][R8B]-R15[R15D][R15W][R15B]
+R8D == R8 Double Word, R8W == R8 Word, R8B == R8 Byte
+when using 32 bit instructions ex: EAX, it ZEROS the top 64 bit Reg
+using 8 bit and 16 bit do not
+FINE TO USE 32 bit but just BE AWARE
+
+
+___ TESTING ___
+.code RegTest proc
+  mov rax, -1 [FFFFFFFFFFFFFFFFFFF]
+  mov al, 5 [FFFFFFFFFFFFFFFFF05]
+  mov ax, 17 [FFFFFFFFFFFFFFFF0011]
+  mov eax, 1 [0000000000000000001]
+
+---- DATA TYPES ----
+Integer:
+byte, word, dword, qword
+Intel Signed vs Unsigned
+
+ASM is not type safe. Signed vs Unsigned
+comes down to which instructions you use.
+
+For some operations (eg: DIV and MUL), there are seperate instructions
+  for signed(IDIV and IMUL) and unsigned
+
+For other operations (eg: ADD and SUB), the resulting bits are identical
+  so ther's only one instruction provided.
+
+It is up to the programmer to select the correct instructions
+
+Two's compliment, if signed bit is 0 then the following is Positive
+  if signed bit is 1 then following is negative, and compliment all of the bits
+    and add 1
+
+BYTE: 8 bits wide, range form 0 -> 255 when unsigned & -2^7->2^7-1 for signed
+
+WORD: fundamental data type (in C short int)
+  16 bits, 0->65,535 unSIGNED, -2^15 -> 2^15-1 when signed
+
+DWORD: (in C int) 
+  (double word) 32 bits, 0->2^32 unSIGNED, -2^31 -> 2^31-1 signed
+
+QWORD: (in C Long Long) 
+  (double-quad-word): 64bits, 0->2^64 when unSIGNED, -2^63 -> 2^63-1 signed
+______________________________________________________
+Floating Point:
+real4: IEE754 Single precision float (float in C)
+  32 bits wide; 1 sign bit, 8 bit exponet, 23 bit mantissa
+
+real8: IEEE754 double precision float (double in C)
+
+real10: IEEE754 extended precision float, 80bits wide
+______________________________________________________
+SIMD Pointer:
+xmmword: 128bit
+
+ymmword: 256 bits
+
+zmmword: 512 bits
+_____Summary of Data Types____
+NAME 		| TYPE  | Bits | POINTER     | Defining
+Byte 		| Int   | 8    | Byte ptr    | db or byte
+Word 		| Int   | 16   | word ptr    | dw or word
+Double Word 	| Int   | 32   | dword ptr   | dd or dword
+Quad Word	| Int   | 64   | qword ptr   | dq or qword
+IEEE 745 Single | float | 32   | real4 ptr   | real4
+IEEE 754 Double	| float | 64   | real8 ptr   | real8
+IEEE 754 Extend	| float | 80   | real10 ptr  | real10
+MMX Packed 64	| SIMD  | 64   | qword ptr   | dq or qword
+SSE Packed 128  | SIMD  | 128  | xmmword ptr | xmmword
+AVX Packed 256	| SIMD  | 256  | ymmword ptr | ymmword
+
+* Testing *
+.data (defining segment)
+myByte(var name) db(type) 78(value)
+myWord dw ?(doesn't need initizialed value)
+
+kuipers real4 89.5
+
+.code
+SomeFunc proc
+  mov al, byte ptr [myByte]
+
+  ret
+
+* More *
+.data
+myFloat real4 67.2
+
+.code
+SomeFunc proc
+  mov eax, real4 ptr [myFloat]
+
+NO TYPE SAFETY
+
+--- MOV and LEA ---
+
+* MOV *
+Move: MOV
+takes two operands of the same size and copies data from the source
+  operand to the destination
+cant move memory to memory, one needs to be a register
+Can use NOP, A No Operation Proc
+>> NOTE <<
+MOV does not change the Flags reg. If both operands are the same reg, it acts as
+    a NOP
+MOV AL, AX or MOV EAX, EAX = 2 byte NOP
+MOV AX, AX or MOV RAX, RAX = 3 byte NOP
+
+--- Load Effective Address: LEA ---
+The LEA instruction loads an address. If you have some variable, you can load
+  the address of it into a reg and manipulate the data indirectly with the
+    reg as a pointer. LEA does not change any flags.
+LEA dest, src
+>> NOTE <<
+LEA is actually an arithmetic instruction, it computes an SIB address.
+
+____ NOTE ____
+whenever you call a function (such as malloc):
+make sure that the stack pointer + push (the return address)
+  aligns to a number that is divisable by 16
+
+    (EXAMPLES)
+.data
+qwral(a ram address to refrence) db 56
+
+.code
+TestFunc proc
+    lea	rax, qwal -> this line will move whatever number qwarl points
+			to to rax
+    
+    mov byte ptr [rax], 7 -> changes value of qwarl indirectly
+
+
+    ret
+TestFunc endp(End Proc)
+end
+_____ ADD SUB INC DEC _____
+ADD: reg/mem, reg/mem/imm
+used for signed and unsigned arithmetic depending on flags
+overflow flag indicates a signed carry. The carry flag indicates
+  an unsigned carry
+FLAGS: overflow, carry, sign, zero, auxiliary carry, parity
+	LOCK is supported
++  DEMO  +
+.code
+
+AddSubTest proc
+  mov rax, 5
+  mov rcx, 12
+
+  add rax, rcx
+(TRICKS AND TRAPS)
+using original reg, EAX, CX, BL etc, generates more efficient machine code
+  than using the new ones, R8B, R12etc. New reg, and 64 bit instructions add a
+    REX prefix in machine code.
+use "ADD rg, 0" to update the flags according to reg without changing it,
+  similiar to "AND reg, reg" and "OR reg, reg". These are slightly different to
+    "CMP reg, reg" since CMP set the flas as "SUB reg, reg"
+use "ADD reg, 1" if you need to "INC reg" which affects the carry flag
+
+ADD is faster than multiplication instructions, so to double a reg, use
+  ex: "ADD ax, ax". It is more common to use shifts for this purpose
+
+_____________________________________________
+SUB:
+subtracts the second operand from the first, and stores the result in the first
+
+the overflow flag indicates a signed borrow. The carry flag indicates an
+  unsigned
+
+(TRICKS)
+a quick way to Zero is "SUB reg, reg". "XOR reg, reg" is more common for this
+  purpose
+use "SUB x, 1" to achieve a "DEC x" which affect
+________ * ___________ * _____________________ * _____________________
+	      SHIFTING IN ASM
+
+pass by refrence in ASM just means pass a pointer
+SHL shift all bit pattern to the left, most significant bit is stored
+  in the carry flag
+________________________________________________
+	      FLAGS REG
+carry flag: an unsigned overflow on left side
+parity flag: 1 if even number of 1 bits
+auxiliary carry: for backwards compatibilty
+zero flag: 0 if last result == 0 1 if not
+JE: Jump equal checks to see if ZERO flag == 0
+Sign Flag: 1 == last RES was neg 0 == last RES pos
+direction flag: 0 reading string forward 1 reading strings backwards
+stc: set carry flag 1
+ctc: set carry flag 0
+std: set direction flag 1
+ctd: set direction flag 0
+overflow flag: represents signed overflow
+_____________________________________________
+		JUMPS
+	      JUMP IF: ----->>>>
+JO: Overflow
+JNO: Not Overflow
+JB/JC/JNAE: Carry unsigned
+JNB/JNC/JAE: Not carry unsigned
+JE/JZ: Zero
+JNE/JNZ: Not Zero
+JBE/JNA: Below or Equal Unsigned
+JNBE/JA: Above Unsigned
+JS: Sign
+JNS: Not Sign
+JP/JPE: Parity Even
+JNP/JPO: Parity Odd
+JL/JNGE: Less Signed
+JNL/JGE: Not Less Signed
+JLE/JNG: Not Greater Signed
+JNLE/JG: Greater Signed
+___Can use CMOV or SET in place of 'J' when using Condtional moves___
+_______________________________________________
+>>>>>>>> Passing Parameters
+__ System V AMD64 ABI __
+The first six integer or pointer ARGs are passed in the REGs:
+RDI | RSI | RDX | R8 | R9 | R(10)used for 
+  -static chain pointer in case of nested functions-
+XMM0 | XMM1 | XMM2 | XMM3 | XMM4 | XMM5 -> XMM7
+are used for the first floating point ARGs
+  additional arguments are passed to the stack
+Integer return values up to 64 bits in size are stored in RAX
+  while values up to 128 bits are stored in RAX and RDX
+Floating point ret values are simply stored in XMM0 and XMM1
+
+if the callee wishes to use REG RBX, RBP, and R12-R15, it must restore their
+  original state before returning control to the caller.
+  All other REG must be saved by the caller if it wishes to preserve their
+  values
+
