@@ -6,7 +6,7 @@
 /*   By: greed <greed@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/06/10 23:24:48 by greed         #+#    #+#                 */
-/*   Updated: 2020/07/22 14:08:53 by greed         ########   odam.nl         */
+/*   Updated: 2020/07/22 20:12:30 by greed         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,6 @@ int		ft_item_cmp(void *item1, void *item2)
 	if (len1 > len2)
 		return (1);
 	return (0);
-}
-void	ft_list_print(t_list *head)
-{
-	while (head)
-	{
-		printf("%s", (char *)head->data);
-		head = head->next;
-		if (head)
-			printf("->");
-		else
-			printf("\n");
-	}
 }
 
 static void	test_ft_read(void)
@@ -105,70 +93,14 @@ static void	test_ft_strdup(void)
 	free(dup);
 }
 
-static void	test_ft_list_push_front(void)
-{
-	t_list	*head;
-
-	head = malloc(sizeof(t_list));
-	if (!head)
-		return ;
-	printf("LST_PUSHFRONT\n");
-	head->data = "oldhead";
-	head->next = NULL;
-	ft_list_push_front(&head, "head");
-	printf("format: head->elem1\n");
-	ft_list_print(head);
-	printf("\n");
-}
-
-static void	test_ft_list_size(void)
-{
-	t_list	*head;
-	size_t	out;
-
-	head = NULL;
-	printf("LST_SIZE\n");
-	ft_list_push_front(&head, "list1");
-	ft_list_push_front(&head, "list2");
-	ft_list_push_front(&head, "list3");
-	ft_list_print(head);
-	out = ft_list_size(head);
-	printf("out: %ld\n\n", out);
-}
-
-static void	test_ft_list_remove_if(void)
-{
-	t_list	*head = NULL;
-
-	ft_list_push_front(&head, "DELETE_ME");
-	ft_list_push_front(&head, "list");
-	ft_list_push_front(&head, "DELETE_ME");
-	ft_list_push_front(&head, "list");
-	ft_list_push_front(&head, "list");
-	ft_list_push_front(&head, "DELETE_ME");
-	ft_list_push_front(&head, "DELETE_ME");
-	ft_list_push_front(&head, "list");
-	ft_list_push_front(&head, "DELETE_ME");
-	ft_list_push_front(&head, "list");
-	ft_list_push_front(&head, "DELETE_ME");
-	ft_list_push_front(&head, "list");
-	printf("LIST_REMOVE_IF\n");
-	ft_list_print(head);
-	ft_list_remove_if(&head, "DELETE_ME", &ft_strcmp);
-	ft_list_print(head);
-	printf("\n");
-}
-
 int		main(void)
 {
+	printf("\n\e[1;34m\t***\t---\tTESTING MANDATORY\t---\t***\n\e[0m");
 	test_ft_write();
 	test_ft_read();
 	test_ft_strlen();
 	test_ft_strcpy();
 	test_ft_strcmp();
 	test_ft_strdup();
-	test_ft_list_push_front();
-	test_ft_list_size();
-	test_ft_list_remove_if();
 	return (0);
 }

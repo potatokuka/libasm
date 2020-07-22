@@ -1,0 +1,1 @@
+./run_mand.sh ; ./run_bonus.sh

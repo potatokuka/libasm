@@ -6,7 +6,7 @@
 ;    By: greed <greed@student.codam.nl>               +#+                      ;
 ;                                                    +#+                       ;
 ;    Created: 2020/06/11 15:27:11 by greed         #+#    #+#                  ;
-;    Updated: 2020/06/11 15:29:16 by greed         ########   odam.nl          ;
+;    Updated: 2020/07/22 20:23:33 by greed         ########   odam.nl          ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -15,12 +15,12 @@
 section.text:
     global	 _ft_list_size
 
-section.data:
-    %define LIST rdi ; defines RDI(1st ARG passed) as list for readability
+section.data: ; defines RDI(1st ARG passed) as list for readability
+    %define LIST rdi
 
 section.text:
 
-_ft_list_size
+_ft_list_size:
     mov	    rax, 0  ; starts rax at 0
     cmp	    LIST, 0 ; check to see if something was passed
     jz	    error   ; if last check is zero, error
