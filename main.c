@@ -6,11 +6,12 @@
 /*   By: greed <greed@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/06/10 23:24:48 by greed         #+#    #+#                 */
-/*   Updated: 2020/07/22 20:12:30 by greed         ########   odam.nl         */
+/*   Updated: 2020/07/23 13:15:50 by greed         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libasm.h"
+#include <errno.h>
 
 int		ft_item_cmp(void *item1, void *item2)
 {
@@ -31,8 +32,9 @@ static void	test_ft_read(void)
 	size_t		out;
 
 	printf("READ\n");
-	fd = open("readtest.txt", O_RDONLY);
-	out = ft_read(fd, buf, 49);
+	fd = open("readtext.txt", O_RDONLY);
+	out = ft_read(-1, buf, 49);
+	perror("write error");
 	printf("out: %ld | buf: %s\n\n", out, buf);
 }
 
@@ -42,9 +44,10 @@ static void	test_ft_write(void)
 	size_t	out;
 
 	printf("WRITE\n");
-	out = ft_write(1, str, strlen(str));
-	if ((int)out == -1)
-		exit(1);
+	out = ft_write(-1, str, strlen(str));
+	perror("write error");
+	/* if ((int)out == -1) */
+	/* 	exit(1); */
 	printf(" <- Written string | str_to_write: %s | out: %ld\n\n", str, out);
 }
 

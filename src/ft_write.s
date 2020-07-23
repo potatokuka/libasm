@@ -14,9 +14,15 @@
 
 section.text:
     global _ft_write
+	extern ___error
 
 error:
-    mov rax, -1 	; setting rax reg(fd) to -1 for error handling
+	push rax		; preserve state of rax
+	call ___error	; get errno code
+	mov rdi, rax 	; restore rax
+	pop rax			; clear rax
+	mov	[rdi], rax  ;
+	mov rax, -1	    ;
     ret	        	; return
 
 _ft_write:

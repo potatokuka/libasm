@@ -6,7 +6,7 @@
 ;    By: greed <greed@student.codam.nl>               +#+                      ;
 ;                                                    +#+                       ;
 ;    Created: 2020/06/11 03:19:52 by greed         #+#    #+#                  ;
-;    Updated: 2020/07/22 14:11:43 by greed         ########   odam.nl          ;
+;    Updated: 2020/07/23 13:14:40 by greed         ########   odam.nl          ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -14,6 +14,7 @@
 
 section.text:
   global	_ft_read
+  extern	___error
 
 _ft_read:
       mov rax, 0x2000003 ; load system call into RAX
@@ -22,5 +23,10 @@ _ft_read:
       ret		 ; return
 
 error:
-      mov rax, -1	 ; set RAX to -1 for error
-      ret		 ; return
+	push rax		; preserve state of rax
+	call ___error	; get errno code
+	mov rdi, rax 	; restore rax
+	pop rax			; clear rax
+	mov	[rdi], rax  ;
+	mov rax, -1	    ;
+    ret	        	; return
